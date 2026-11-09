@@ -1,5 +1,5 @@
 // 離線快取：連得上網路就拿最新版，斷線時改用快取（走路時訊號不好也能玩）
-const CACHE = 'walking-dungeon-v1';
+const CACHE = 'walking-dungeon-v2';
 const ASSETS = [
   './',
   './index.html',
@@ -36,8 +36,10 @@ self.addEventListener('activate', (event) => {
 self.addEventListener('fetch', (event) => {
   const req = event.request;
   if (req.method !== 'GET' || new URL(req.url).origin !== self.location.origin) return;
+  // 連得上網路時一律向伺服器確認有沒有新版本，避免發佈更新後還拿到瀏覽器快取裡的舊程式
+  const fresh = req.mode === 'navigate' ? req : new Request(req, { cache: 'no-cache' });
   event.respondWith(
-    fetch(req)
+    fetch(fresh)
       .then((res) => {
         if (res.ok) {
           const copy = res.clone();

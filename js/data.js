@@ -3,8 +3,14 @@
 
 /** 每 50 公尺（或搖晃 50 次）= 1 步 */
 export const STEP_UNITS = 50;
-/** 新玩家的見面禮 */
-export const START_STEPS = 10;
+/**
+ * 新玩家的見面禮（開新遊戲時拿到）。
+ * 目前為了方便測試給得比較多；正式遊玩想調低時改這三個數字即可。
+ */
+export const START_STEPS = 100;
+export const START_COINS = 100;
+/** 每一種水果各給幾個 */
+export const START_FRUITS = 10;
 /** 隊伍上限（跟在玩家後面的生物數） */
 export const PARTY_MAX = 3;
 /** 等級門檻：LEVEL_EXP[lv] = 升到該等級需要一起走過的步數 */

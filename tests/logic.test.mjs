@@ -1,7 +1,9 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { mulberry32 } from '../js/rng.js';
-import { CREATURES, FRUITS, FURNITURE, ITEMS, PARTY_MAX, STEP_UNITS, NEST_FIXED } from '../js/data.js';
+import {
+  CREATURES, FRUITS, FURNITURE, ITEMS, PARTY_MAX, STEP_UNITS, NEST_FIXED, START_STEPS, START_COINS, START_FRUITS,
+} from '../js/data.js';
 import {
   generateDungeon, pickSize, isConnected, isBlocking, tileAt, tryMove, addUnits, manualSync,
   feedCreature, feedValue, getBonuses, levelForExp, useItem, buy, priceOf, enterNewFloor, enterNest,
@@ -14,6 +16,7 @@ function fixture(size = 3, attr = 'forest') {
   const state = defaultState();
   state.started = true;
   state.floor = 1;
+  state.coins = 0;
   const d = { floor: 1, attr, size, tiles: [], player: { x: 0, y: 0, dir: 'right' }, trail: [] };
   for (let y = 0; y < size; y++) for (let x = 0; x < size; x++) d.tiles.push({ x, y, deco: 0, seen: true, ent: null });
   d.tiles[size * size - 1].ent = { type: 'exit' };
@@ -21,6 +24,20 @@ function fixture(size = 3, attr = 'forest') {
   state.scene = 'dungeon';
   return state;
 }
+
+test('開局見面禮：100 步、100 元、每種水果各 10 個', () => {
+  assert.equal(START_STEPS, 100);
+  assert.equal(START_COINS, 100);
+  assert.equal(START_FRUITS, 10);
+  const s = defaultState();
+  assert.equal(s.steps, 100);
+  assert.equal(s.coins, 100);
+  for (const id of Object.keys(FRUITS)) assert.equal(s.inv[id], 10, `${id} ×10`);
+  assert.equal(s.inv.mole_snack, 1);
+  // 每次開新遊戲都是新的物件，不會互相影響
+  s.inv.apple = 0;
+  assert.equal(defaultState().inv.apple, 10);
+});
 
 test('地牢大小比例：2×2 與 5×5 各約 10%', () => {
   const rng = mulberry32(42);
