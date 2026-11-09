@@ -1,7 +1,7 @@
 // 步行地牢：畫面、操作與各種面板
 import {
   STEP_UNITS, PARTY_MAX, ATTRS, ATTR_IDS, FRUITS, ITEMS, FURNITURE, CREATURES, SKILLS, RARITY,
-  NEST_W, NEST_H, NEST_FIXED, MERCHANT,
+  NEST_W, NEST_H, NEST_FIXED, MERCHANT, START_STEPS, START_COINS, START_FRUITS,
 } from './data.js';
 import * as G from './logic.js';
 import { defaultState, load, save, clearSave, exportSave, importSave } from './store.js';
@@ -16,6 +16,7 @@ const $$ = (sel, root = document) => [...root.querySelectorAll(sel)];
 const esc = (s) => String(s).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]);
 
 const METHOD_ICON = { gps: '📡', motion: '📳', ble: '🔵', manual: '✍️' };
+const STARTER_GIFT = `${START_STEPS} 步、${START_COINS} 元，還有每種水果各 ${START_FRUITS} 個`;
 
 let state = load() || defaultState();
 let tracker = null;
@@ -1540,6 +1541,7 @@ function showTitle() {
     ['swamp', holeSVG()],
     ['swamp', exitSVG('swamp')],
   ].map(([attr, inner]) => `<div class="t ${attr}">${inner}</div>`).join('');
+  $('#starter-gift').textContent = `送你見面禮：${STARTER_GIFT}！`;
   $('#title-screen').hidden = false;
   $('#title-start').addEventListener('click', () => {
     state.started = true;
@@ -1549,7 +1551,7 @@ function showTitle() {
     persist(true);
     startTracking('auto', { gesture: true });
     sfx('chest');
-    toast('🎁 見面禮：送你 10 步！', 'good', 3000);
+    toast(`🎁 見面禮：${STARTER_GIFT}！`, 'good', 3200);
     log('點旁邊的地塊或用方向鍵移動，每走一格消耗 1 步。前面那隻生物可以餵水果交朋友！');
   }, { once: true });
 }

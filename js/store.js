@@ -1,5 +1,5 @@
 // 存檔：預設狀態、localStorage 讀寫、匯出／匯入
-import { START_STEPS } from './data.js';
+import { START_STEPS, START_COINS, START_FRUITS, FRUITS } from './data.js';
 
 export const SAVE_KEY = 'walking-dungeon/save/v1';
 
@@ -9,9 +9,9 @@ export function defaultState() {
     started: false,
     steps: START_STEPS,
     progress: 0,
-    coins: 0,
+    coins: START_COINS,
     floor: 0,
-    inv: { apple: 1, melon: 1, bogberry: 1, mole_snack: 1 },
+    inv: { ...Object.fromEntries(Object.keys(FRUITS).map((id) => [id, START_FRUITS])), mole_snack: 1 },
     creatures: [],
     party: [],
     nextUid: 1,
