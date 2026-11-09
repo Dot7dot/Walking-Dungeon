@@ -1,0 +1,128 @@
+<!doctype html>
+<html lang="zh-Hant-TW">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>步行地牢 Walking Dungeon</title>
+    <meta name="description" content="用真實走路累積步數（每 50 公尺 = 1 步），再用步數探索隨機生成的地牢、收服地牢生物。" />
+    <meta name="theme-color" content="#1a120b" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="apple-mobile-web-app-title" content="步行地牢" />
+    <link rel="manifest" href="manifest.webmanifest" />
+    <link rel="icon" type="image/svg+xml" href="icons/icon.svg" />
+    <link rel="apple-touch-icon" href="icons/icon-192.png" />
+    <link rel="stylesheet" href="css/style.css" />
+    <script type="module" src="js/main.js"></script>
+  </head>
+  <body data-attr="nest">
+    <div id="app">
+      <header class="hud">
+        <div class="hud-main">
+          <button class="hud-box hud-steps" id="hud-steps" data-open="tracker" aria-label="可用步數">
+            <span class="hud-label">步數</span>
+            <span class="hud-value"><span class="emo">👣</span><b id="steps">0</b></span>
+          </button>
+          <button class="hud-box hud-progress" data-open="tracker" aria-label="距離下一步">
+            <span class="hud-label" id="next-label">距離下一步</span>
+            <span class="bar"><i id="progress-fill"></i></span>
+            <span class="hud-sub" id="progress-text">0 / 50 m</span>
+          </button>
+          <div class="hud-box hud-coins" aria-label="錢幣">
+            <span class="hud-label">錢幣</span>
+            <span class="hud-value"><i class="coin-ic"></i><b id="coins">0</b></span>
+          </div>
+        </div>
+        <button class="tracker-pill" id="tracker-pill" data-phase="idle">
+          <span class="dot"></span><span class="txt" id="tracker-text">計步尚未啟動</span><span class="go" id="tracker-go">開始 ›</span>
+        </button>
+      </header>
+
+      <section class="view" id="dungeon-view" hidden>
+        <div class="floor-bar" id="floor-bar"></div>
+        <div class="board-wrap" id="board-wrap">
+          <div class="board" id="board">
+            <div class="tiles" id="tiles"></div>
+            <div class="actors" id="actors"></div>
+            <div class="fx" id="fx"></div>
+          </div>
+        </div>
+        <div class="log" id="log" aria-live="polite"></div>
+        <div class="controls">
+          <div class="dpad" aria-label="方向鍵">
+            <button data-move="up" aria-label="上">▲</button>
+            <button data-move="left" aria-label="左">◀</button>
+            <button class="center" id="ctx-btn" aria-label="動作">背包</button>
+            <button data-move="right" aria-label="右">▶</button>
+            <button data-move="down" aria-label="下">▼</button>
+          </div>
+          <div class="menu">
+            <button data-open="bag"><span class="emo">🎒</span>背包</button>
+            <button data-open="party"><span class="emo">🐾</span>隊伍</button>
+            <button data-open="dex"><span class="emo">📖</span>圖鑑</button>
+            <button data-open="settings"><span class="emo">⚙️</span>設定</button>
+          </div>
+        </div>
+      </section>
+
+      <section class="view" id="nest-view" hidden>
+        <div class="nest-head">
+          <h1>地底小窩</h1>
+          <p id="nest-sub"></p>
+        </div>
+        <div class="nest-room-wrap">
+          <div class="nest-room" id="nest-room">
+            <div class="nest-grid" id="nest-grid"></div>
+            <div class="nest-creatures" id="nest-creatures"></div>
+          </div>
+        </div>
+        <div class="edit-hint" id="edit-hint" hidden></div>
+        <div class="tray" id="tray" hidden></div>
+        <div class="nest-party" id="nest-party"></div>
+        <div class="nest-actions">
+          <button class="btn" data-nest="bell"><span class="emo">🔔</span>搖鈴呼喚</button>
+          <button class="btn" data-nest="decorate" id="decorate-btn"><span class="emo">🛠️</span>佈置小窩</button>
+          <button class="btn primary" data-nest="leave"><span class="emo">🪜</span>出發探險</button>
+        </div>
+        <div class="menu">
+          <button data-open="bag"><span class="emo">🎒</span>背包</button>
+          <button data-open="party"><span class="emo">🐾</span>隊伍</button>
+          <button data-open="dex"><span class="emo">📖</span>圖鑑</button>
+          <button data-open="settings"><span class="emo">⚙️</span>設定</button>
+        </div>
+      </section>
+    </div>
+
+    <div class="sheet-root" id="sheet-root" hidden>
+      <div class="sheet-backdrop" data-close></div>
+      <div class="sheet" role="dialog" aria-modal="true" aria-labelledby="sheet-title">
+        <div class="sheet-head">
+          <h2 id="sheet-title"></h2>
+          <button class="sheet-close" data-close aria-label="關閉">✕</button>
+        </div>
+        <div class="sheet-body" id="sheet-body"></div>
+      </div>
+    </div>
+
+    <div id="toasts" aria-live="polite"></div>
+
+    <div class="title-screen" id="title-screen" hidden>
+      <div class="title-card">
+        <div class="title-art" id="title-art" aria-hidden="true"></div>
+        <h1>步行地牢</h1>
+        <p class="sub">WALKING DUNGEON</p>
+        <ul>
+          <li><span class="emo">👣</span> 在現實中每走 <b>50 公尺</b>，就能得到 <b>1 步</b></li>
+          <li><span class="emo">🗝️</span> 用步數探索隨機生成的地牢：撿錢幣、開寶箱、採水果</li>
+          <li><span class="emo">🍎</span> 用水果和地牢生物交朋友，牠們會跟在你後面一起冒險</li>
+          <li><span class="emo">🕳️</span> 踩進鼴鼠洞回到地底小窩，佈置房間、搖鈴更換夥伴</li>
+        </ul>
+        <button class="btn primary big" id="title-start">開始冒險</button>
+        <p class="fine">會先嘗試 GPS 定位計步；無法使用時自動改用搖晃計步（搖 50 次 = 1 步），<br />還可以連接藍牙跑步機或手動同步健康 App。送你 10 步當見面禮！</p>
+      </div>
+    </div>
+
+    <noscript><p style="padding: 20px; text-align: center">這個遊戲需要啟用 JavaScript。</p></noscript>
+  </body>
+</html>
