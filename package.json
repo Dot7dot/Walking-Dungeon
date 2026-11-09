@@ -1,0 +1,12 @@
+{
+  "name": "walking-dungeon",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "步行地牢：用真實走路累積步數，再用步數探索隨機地牢的網頁遊戲",
+  "scripts": {
+    "test": "node --test \"tests/*.test.mjs\"",
+    "start": "python3 -m http.server 8080"
+  },
+  "license": "MIT"
+}
