@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="zh-Hant-TW">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>步行地牢 Walking Dungeon</title>
+    <script>
+      // GitHub Pages 專案網站位於 /<repository>/ 底下：找不到的網址一律帶回遊戲首頁
+      (function () {
+        var first = location.pathname.split('/').filter(Boolean)[0];
+        location.replace(first ? '/' + first + '/' : '/');
+      })();
+    </script>
+    <style>
+      body {
+        margin: 0;
+        min-height: 100vh;
+        display: grid;
+        place-items: center;
+        background: #1a120b;
+        color: #f6ecd9;
+        font-family: -apple-system, BlinkMacSystemFont, "PingFang TC", "Noto Sans TC", "Microsoft JhengHei", sans-serif;
+      }
+      a {
+        color: #f5c04a;
+      }
+    </style>
+  </head>
+  <body>
+    <p>迷路了嗎？正在帶你回到 <a href="./">步行地牢</a>…</p>
+  </body>
+</html>
